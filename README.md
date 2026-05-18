@@ -142,8 +142,8 @@ Aplikasi **Smart Inventory** adalah sistem manajemen inventarisasi pergudangan m
 Saat Anda menjalankan `db:seed`, akun pengguna bawaan dengan tingkat otorisasi peran yang berbeda otomatis dibuat untuk mempermudah uji coba:
 
 ### 1. Administrator Utama (Full Access + Advanced Control)
-*   **Email**: `firdhanv@gmail.com`
-*   **Password**: `@Bandung12`
+*   **Email**: `admin@gmail.com`
+*   **Password**: `admin12`
 *   **Hak Akses**: Akses kontrol menyeluruh terhadap catalog barang, mutasi, spreadsheet fx, edit/hapus Buku Besar, registrasi akun staf, payroll gaji karyawan, serta hak penuh untuk mereset log audit trail.
 
 ### 2. Operator Gudang (Akses Terbatas + Mutasi Stok & Scanner)
