@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\FinancialController;
+use App\Http\Controllers\UserController;
 use App\Models\Product;
 use App\Models\Stock;
 use App\Models\Transaction;
@@ -14,12 +15,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
@@ -81,6 +80,9 @@ Route::middleware('auth')->group(function () {
     // Financials
     Route::get('financials', [FinancialController::class, 'index'])->name('financials.index');
     Route::post('financials', [FinancialController::class, 'store'])->name('financials.store');
+    Route::put('financials/{financial}', [FinancialController::class, 'update'])->name('financials.update');
+    Route::delete('financials/{financial}', [FinancialController::class, 'destroy'])->name('financials.destroy');
+    Route::post('financials/clear-logs', [FinancialController::class, 'clearLogs'])->name('financials.clear-logs');
     Route::get('financials/export', [FinancialController::class, 'export'])->name('financials.export');
 
     // QR/Barcode Scan page
@@ -95,6 +97,9 @@ Route::middleware('auth')->group(function () {
     Route::get('prd', function () {
         return Inertia::render('PRD');
     })->name('prd');
+
+    // Users Management
+    Route::resource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
 });
 
 require __DIR__.'/auth.php';

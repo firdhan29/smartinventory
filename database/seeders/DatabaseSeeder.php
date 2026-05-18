@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
         // 3. Create Admin User
         $admin = User::factory()->create([
             'name' => 'Administrator',
-            'email' => 'admin@smartinventory.com',
+            'email' => 'firdhanv@gmail.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('@Bandung12'),
         ]);
         $admin->assignRole('admin');
 

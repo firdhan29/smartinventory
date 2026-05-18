@@ -200,9 +200,16 @@ const submitUpdate = () => {
                                     class="hover:bg-slate-50/30 transition-colors"
                                 >
                                     <td class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <!-- Miniature Product Thumbnail -->
-                                            <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
+                                        <div class="flex items-center justify-between gap-3 max-w-[280px]">
+                                            <div class="flex flex-col">
+                                                <span class="font-bold text-slate-700 leading-snug">{{ stk.product.name }}</span>
+                                                <div class="flex items-center gap-2 mt-0.5">
+                                                    <span class="text-xs font-mono font-bold text-indigo-600">{{ stk.product.sku }}</span>
+                                                    <span class="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase font-bold">{{ stk.product.kategori }}</span>
+                                                </div>
+                                            </div>
+                                            <!-- Miniature Product Thumbnail on the right -->
+                                            <div class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
                                                 <img 
                                                     v-if="stk.product.foto" 
                                                     :src="`/storage/${stk.product.foto}`" 
@@ -211,13 +218,6 @@ const submitUpdate = () => {
                                                 <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-slate-400">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
                                                 </svg>
-                                            </div>
-                                            <div class="flex flex-col">
-                                                <span class="font-bold text-slate-700 leading-snug">{{ stk.product.name }}</span>
-                                                <div class="flex items-center gap-2 mt-0.5">
-                                                    <span class="text-xs font-mono font-bold text-indigo-600">{{ stk.product.sku }}</span>
-                                                    <span class="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase font-bold">{{ stk.product.kategori }}</span>
-                                                </div>
                                             </div>
                                         </div>
                                     </td>

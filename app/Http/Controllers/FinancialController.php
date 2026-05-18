@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Financial;
+use App\Models\FinancialAuditLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -40,6 +41,14 @@ class FinancialController extends Controller
         // Generate Chart Data (Last 6 Months)
         $chartData = $this->getMonthlyChartData();
 
+        // Retrieve financial audit trail logs
+        $auditLogs = FinancialAuditLog::with('user')
+            ->latest()
+            ->take(50)
+            ->get();
+
+        $user = auth()->user();
+
         return Inertia::render('Financials/Index', [
             'financials' => $financials,
             'stats' => [
@@ -49,6 +58,9 @@ class FinancialController extends Controller
             ],
             'chartData' => $chartData,
             'filters' => $request->only(['type', 'start_date', 'end_date']),
+            'auditLogs' => $auditLogs,
+            'isAdmin' => $user ? $user->hasRole('admin') : false,
+            'isFinance' => $user ? $user->hasRole('finance') : false,
         ]);
     }
 
@@ -64,19 +76,123 @@ class FinancialController extends Controller
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        // Standard financial entry doesn't have a transaction relation
-        Financial::create([
+        $financial = Financial::create([
             'type' => $validated['type'],
             'amount' => $validated['amount'],
             'date' => $validated['date'],
-            // Notes can be added to standard entries. Let's save notes in the transaction_id or wait,
-            // the financials table migration only has id, type, amount, date, transaction_id.
-            // So if notes are provided, we can log them somewhere or just skip since financials table doesn't have a notes field,
-            // or we can let it save. Wait, financials table has: id, type, amount, date, transaction_id, timestamps.
-            // Let's not pass notes to Financial::create since it doesn't exist, which avoids SQL column errors! Very smart!
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        // Record create action in Audit Logs
+        FinancialAuditLog::create([
+            'user_id' => auth()->id(),
+            'financial_id' => $financial->id,
+            'action' => 'STORE',
+            'new_values' => [
+                'type' => $financial->type,
+                'amount' => (float) $financial->amount,
+                'date' => $financial->date instanceof Carbon ? $financial->date->toDateString() : (is_string($financial->date) ? $financial->date : Carbon::parse($financial->date)->toDateString()),
+                'notes' => $financial->notes,
+            ]
         ]);
 
         return redirect()->route('financials.index')->with('success', 'Entri keuangan manual berhasil dicatat.');
+    }
+
+    /**
+     * Update an existing financial entry.
+     */
+    public function update(Request $request, Financial $financial): RedirectResponse
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasAnyRole(['admin', 'finance'])) {
+            abort(403, 'Hanya Administrator dan Staf Finance yang diizinkan untuk mengedit keuangan.');
+        }
+
+        $validated = $request->validate([
+            'type' => 'required|in:pemasukan,pengeluaran',
+            'amount' => 'required|numeric|min:0.01',
+            'date' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        // Snapshot old values before update
+        $oldValues = [
+            'type' => $financial->type,
+            'amount' => (float) $financial->amount,
+            'date' => $financial->date instanceof Carbon ? $financial->date->toDateString() : (is_string($financial->date) ? $financial->date : Carbon::parse($financial->date)->toDateString()),
+            'notes' => $financial->notes,
+        ];
+
+        $financial->update([
+            'type' => $validated['type'],
+            'amount' => $validated['amount'],
+            'date' => $validated['date'],
+            'notes' => $validated['notes'] ?? null,
+        ]);
+
+        // Record edit action in Audit Logs
+        FinancialAuditLog::create([
+            'user_id' => auth()->id(),
+            'financial_id' => $financial->id,
+            'action' => 'EDIT',
+            'old_values' => $oldValues,
+            'new_values' => [
+                'type' => $financial->type,
+                'amount' => (float) $financial->amount,
+                'date' => $financial->date instanceof Carbon ? $financial->date->toDateString() : (is_string($financial->date) ? $financial->date : Carbon::parse($financial->date)->toDateString()),
+                'notes' => $financial->notes,
+            ]
+        ]);
+
+        return redirect()->route('financials.index')->with('success', 'Entri keuangan berhasil diperbarui.');
+    }
+
+    /**
+     * Delete a financial entry.
+     */
+    public function destroy(Financial $financial): RedirectResponse
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasAnyRole(['admin', 'finance'])) {
+            abort(403, 'Hanya Administrator dan Staf Finance yang diizinkan untuk menghapus data keuangan.');
+        }
+
+        // Snapshot old values before deletion
+        $oldValues = [
+            'type' => $financial->type,
+            'amount' => (float) $financial->amount,
+            'date' => $financial->date instanceof Carbon ? $financial->date->toDateString() : (is_string($financial->date) ? $financial->date : Carbon::parse($financial->date)->toDateString()),
+            'notes' => $financial->notes,
+        ];
+
+        $financialId = $financial->id;
+        $financial->delete();
+
+        // Record delete action in Audit Logs
+        FinancialAuditLog::create([
+            'user_id' => auth()->id(),
+            'financial_id' => $financialId,
+            'action' => 'DELETE',
+            'old_values' => $oldValues,
+        ]);
+
+        return redirect()->route('financials.index')->with('success', 'Entri keuangan berhasil dihapus.');
+    }
+
+    /**
+     * Clear all financial audit trail logs (Admin only).
+     */
+    public function clearLogs(): RedirectResponse
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasRole('admin')) {
+            abort(403, 'Hanya Administrator utama yang diizinkan untuk membersihkan riwayat audit.');
+        }
+
+        FinancialAuditLog::truncate();
+
+        return redirect()->route('financials.index')->with('success', 'Riwayat audit keuangan berhasil dibersihkan.');
     }
 
     /**
@@ -127,3 +243,4 @@ class FinancialController extends Controller
         return Excel::download(new FinancialsExport, 'buku-besar-keuangan.xlsx');
     }
 }
+

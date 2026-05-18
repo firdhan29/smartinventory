@@ -26,6 +26,9 @@ class RoleAndPermissionSeeder extends Seeder
         $roleOperator = Role::firstOrCreate(['name' => 'operator', 'guard_name' => 'web']);
         $roleOperator->givePermissionTo([$permManageTransactions, $permViewStocks]);
 
+        $roleFinance = Role::firstOrCreate(['name' => 'finance', 'guard_name' => 'web']);
+        $roleFinance->givePermissionTo([$permViewFinance, $permViewStocks]);
+
         $roleAdmin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $roleAdmin->givePermissionTo([$permManageProducts, $permManageTransactions, $permViewFinance, $permViewStocks]);
     }

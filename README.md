@@ -25,10 +25,10 @@ Aplikasi **Smart Inventory** adalah sistem manajemen inventarisasi pergudangan m
 *   **Pencatatan Masuk & Keluar**: Form pencatatan transaksi masuk (pembelian/restock) dan keluar (penjualan/disposal) dengan *smart-fill* otomatis harga aktual.
 *   **Cetak PDF (DomPDF)**: Tombol cetak langsung untuk mengunduh bukti **Surat Jalan / Invois PDF** profesional yang memuat kop surat, rincian barang, total biaya, catatan, serta kolom tanda tangan operator/manajer.
 
-### 5. 💰 Buku Besar Keuangan & Ekspor Excel
-*   **Auto-Ledger**: Setiap transaksi mutasi barang masuk otomatis tercatat sebagai **Pengeluaran** kas, dan barang keluar tercatat sebagai **Pemasukan** kas di buku besar.
-*   **Monthly Cashflow Line Chart**: Grafik perbandingan total omset bulanan vs pengeluaran dalam 6 bulan terakhir.
-*   **Catat Kas Operasional**: Modul penginputan kas manual untuk biaya non-barang seperti listrik, gaji karyawan, dan sewa.
+### 5. 📊 Spreadsheet Laporan Keuangan, Karyawan & Payroll
+*   **Spreadsheet Interaktif (Excel-Style)**: Grid spreadsheet responsif lengkap dengan baris indeks (`1, 2, 3...`), tajuk kolom (`A, B, C...`), dan baris formula reaktif `=SUM(Pemasukan) - SUM(Pengeluaran)` layaknya Google Sheets.
+*   **Kelola Data Karyawan**: CRUD Karyawan terintegrasi database untuk mendata Nama, Posisi, Gaji Pokok Bulanan, dan Rekening Bank Staf.
+*   **Disbursement Payroll Buku Besar**: Pencairan gaji staf dengan satu klik yang otomatis mengurangi arus kas operasional dan mencatat slip payroll ke Buku Besar secara langsung.
 *   **Ekspor Excel (.xlsx)**: Unduh lembar kerja spreadsheet buku besar keuangan terperinci dalam satu klik menggunakan *Maatwebsite Excel*.
 
 ### 6. 📸 Pemindai Barcode / QR (Mobile & Desktop USB)
@@ -36,13 +36,21 @@ Aplikasi **Smart Inventory** adalah sistem manajemen inventarisasi pergudangan m
 *   **Viewfinder Radar Scanner**: Animasi radar bidik kamera dengan sinar laser merah bergerak.
 *   **Fast-Checkout Lookup**: Pemindaian kilat atau input SKU manual untuk memunculkan formulir transaksi secara instan.
 
+### 7. 📋 Histori Edit & Audit Trail Logging (Premium Track)
+*   **Pencatatan Transaksional Audit**: Setiap tindakan penambahan, pengubahan, atau penghapusan catatan kas oleh staf secara instan dicatat di tabel `financial_audit_logs`.
+*   **Visual Side-by-Side Comparison**: Membandingkan perubahan **Data Lama (Sebelum)** vs **Data Baru (Sesudah)** secara mendalam (Tipe, Nominal, Tanggal, dan Catatan).
+*   **Role-Based Gating Otoritas**:
+    *   **Administrator (`admin`)**: Akses penuh mengedit/menghapus kas Buku Besar, melihat riwayat audit, dan hak eksklusif membersihkan log audit secara permanen.
+    *   **Finance Specialist (`finance`)**: Dapat menginput kas manual, mengedit ledger, dan membaca log audit dengan status *Read-Only*.
+    *   **Operator Gudang (`operator`)**: Terkunci sepenuhnya dari menu Keuangan dan Audit Trail.
+
 ---
 
 ## 🛠 TEKNOLOGI YANG DIGUNAKAN
 
 ### Backend (Laravel 12 Core)
 *   **Laravel 12.x**: Kerangka kerja backend PHP berkinerja tinggi.
-*   **Spatie Laravel Permission**: Manajemen otorisasi hak akses berdasarkan peran (**Admin** dan **Operator Gudang**).
+*   **Spatie Laravel Permission**: Manajemen otorisasi hak akses berdasarkan peran (**Admin**, **Finance**, dan **Operator Gudang**).
 *   **Barryvdh Laravel DomPDF**: Pembuat berkas laporan berformat PDF.
 *   **Maatwebsite Laravel Excel**: Pengekspor berkas Excel (.xlsx).
 *   **Intervention Image**: Pemotong dan pengompres resolusi foto produk secara otomatis.
@@ -62,7 +70,7 @@ Aplikasi **Smart Inventory** adalah sistem manajemen inventarisasi pergudangan m
 ## 🚀 PANDUAN INSTALASI & MENJALANKAN LOKAL
 
 ### Prasyarat
-*   PHP $\ge$ 8.2
+*   PHP $\ge$ 8.2 (Direkomendasikan PHP 8.3)
 *   Composer
 *   Node.js & NPM
 *   Laragon / XAMPP (MySQL Database)
@@ -131,14 +139,17 @@ Aplikasi **Smart Inventory** adalah sistem manajemen inventarisasi pergudangan m
 
 ## 🔑 AKUN AKSES DEMO (TESTING CREDENTIALS)
 
-Saat Anda menjalankan `db:seed`, dua akun pengguna dengan tingkat otorisasi peran yang berbeda otomatis dibuat untuk mempermudah uji coba:
+Saat Anda menjalankan `db:seed`, akun pengguna bawaan dengan tingkat otorisasi peran yang berbeda otomatis dibuat untuk mempermudah uji coba:
 
-### 1. Administrator (Akses Penuh + Keuangan)
-*   **Email**: `admin@smartinventory.com`
-*   **Password**: `password`
-*   **Hak Akses**: Dapat melihat laporan keuangan, mengunduh file Excel buku besar, mengelola produk (CRUD), serta melihat stok.
+### 1. Administrator Utama (Full Access + Advanced Control)
+*   **Email**: `firdhanv@gmail.com`
+*   **Password**: `@Bandung12`
+*   **Hak Akses**: Akses kontrol menyeluruh terhadap catalog barang, mutasi, spreadsheet fx, edit/hapus Buku Besar, registrasi akun staf, payroll gaji karyawan, serta hak penuh untuk mereset log audit trail.
 
 ### 2. Operator Gudang (Akses Terbatas + Mutasi Stok & Scanner)
 *   **Email**: `operator@smartinventory.com`
 *   **Password**: `password`
-*   **Hak Akses**: Terbatas hanya untuk melihat stok produk, melakukan transaksi masuk/keluar barang (scan/manual), serta mengunduh Surat Jalan PDF. Tidak dapat mengakses data keuangan atau profit.
+*   **Hak Akses**: Terbatas hanya untuk melihat stok produk, letak koordinat rak, melakukan transaksi masuk/keluar barang (scan/manual), serta mengunduh Surat Jalan PDF. Tidak dapat mengakses data keuangan, karyawan, payroll, ataupun audit trail.
+
+### 3. Staf Finance (Akses Keuangan + Read-Only Audit)
+*   Dapat didaftarkan langsung oleh Administrator melalui modul **Registrasi Akun Staf** di dalam dasbor Admin. Staf Finance memiliki hak penuh mencatat kas manual, mengedit ledger, serta melihat visual riwayat audit (read-only, tanpa hak reset).

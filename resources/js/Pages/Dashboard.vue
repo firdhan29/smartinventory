@@ -122,7 +122,7 @@ const chartOptions = {
                         Selamat datang kembali, <span class="font-semibold text-indigo-600">{{ $page.props.auth.user.name }}</span>! Kelola pergerakan barang dan keuangan real-time di sini.
                     </p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2" v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))">
                     <Link 
                         :href="route('scan')"
                         class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-xl shadow-lg shadow-indigo-100 hover:shadow-indigo-200 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
@@ -141,7 +141,9 @@ const chartOptions = {
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
                 
                 <!-- KPI Widgets Section -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 animate-fade-in"
+                    :class="($page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('finance'))) ? 'lg:grid-cols-5' : 'lg:grid-cols-2'"
+                >
                     <!-- Total Products Card -->
                     <div class="relative overflow-hidden bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group">
                         <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full group-hover:scale-125 transition-all duration-500 opacity-60"></div>
@@ -177,7 +179,9 @@ const chartOptions = {
                     </div>
 
                     <!-- Total Income Card -->
-                    <div class="relative overflow-hidden bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group">
+                    <div v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('finance'))"
+                        class="relative overflow-hidden bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group"
+                    >
                         <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-125 transition-all duration-500 opacity-60"></div>
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pemasukan</span>
@@ -194,7 +198,9 @@ const chartOptions = {
                     </div>
 
                     <!-- Total Expense Card -->
-                    <div class="relative overflow-hidden bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group">
+                    <div v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('finance'))"
+                        class="relative overflow-hidden bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group"
+                    >
                         <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-rose-50 rounded-full group-hover:scale-125 transition-all duration-500 opacity-60"></div>
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengeluaran</span>
@@ -211,7 +217,9 @@ const chartOptions = {
                     </div>
 
                     <!-- Net Profit Card (Full Gradient for visual WOW factor) -->
-                    <div class="relative overflow-hidden bg-gradient-to-br from-indigo-900 to-slate-900 border border-indigo-950 rounded-2xl p-5 shadow-lg shadow-indigo-900/10 group col-span-1 sm:col-span-2 lg:col-span-1">
+                    <div v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('finance'))"
+                        class="relative overflow-hidden bg-gradient-to-br from-indigo-900 to-slate-900 border border-indigo-950 rounded-2xl p-5 shadow-lg shadow-indigo-900/10 group col-span-1 sm:col-span-2 lg:col-span-1"
+                    >
                         <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-800 rounded-full group-hover:scale-125 transition-all duration-500 opacity-30"></div>
                         <div class="flex items-center justify-between relative z-10">
                             <span class="text-xs font-bold text-indigo-200 uppercase tracking-wider">Laba Bersih</span>

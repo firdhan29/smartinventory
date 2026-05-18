@@ -15,6 +15,7 @@ class Financial extends Model
         'amount',
         'date',
         'transaction_id',
+        'notes',
     ];
 
     protected $casts = [

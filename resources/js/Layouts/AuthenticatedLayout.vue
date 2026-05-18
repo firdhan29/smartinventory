@@ -22,10 +22,13 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                <Link :href="route('dashboard')" class="flex items-center gap-2">
+                                    <div class="w-9 h-9 flex items-center justify-center shrink-0">
+                                        <ApplicationLogo class="w-full h-full" />
+                                    </div>
+                                    <span class="text-lg font-black text-slate-800 tracking-tight hidden lg:block">
+                                        Smart<span class="text-indigo-600">Inventory</span>
+                                    </span>
                                 </Link>
                             </div>
 
@@ -40,6 +43,7 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                                 <NavLink
+                                    v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))"
                                     :href="route('products.index')"
                                     :active="route().current('products.*')"
                                 >
@@ -52,19 +56,28 @@ const showingNavigationDropdown = ref(false);
                                     Stok
                                 </NavLink>
                                 <NavLink
+                                    v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))"
                                     :href="route('transactions.index')"
                                     :active="route().current('transactions.*')"
                                 >
                                     Mutasi
                                 </NavLink>
                                 <NavLink
-                                    v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.includes('admin')"
+                                    v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('finance'))"
                                     :href="route('financials.index')"
                                     :active="route().current('financials.*')"
                                 >
                                     Keuangan
                                 </NavLink>
                                 <NavLink
+                                    v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.includes('admin')"
+                                    :href="route('users.index')"
+                                    :active="route().current('users.*')"
+                                >
+                                    Pengguna
+                                </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))"
                                     :href="route('scan')"
                                     :active="route().current('scan')"
                                     class="flex items-center gap-1 font-semibold text-indigo-600 hover:text-indigo-800"
@@ -76,6 +89,7 @@ const showingNavigationDropdown = ref(false);
                                     Scan QR
                                 </NavLink>
                                 <NavLink
+                                    v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.includes('admin')"
                                     :href="route('prd')"
                                     :active="route().current('prd')"
                                 >
@@ -189,6 +203,7 @@ const showingNavigationDropdown = ref(false);
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))"
                             :href="route('products.index')"
                             :active="route().current('products.*')"
                         >
@@ -201,19 +216,28 @@ const showingNavigationDropdown = ref(false);
                             Stok & Rak Gudang
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))"
                             :href="route('transactions.index')"
                             :active="route().current('transactions.*')"
                         >
                             Log Mutasi Barang
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.includes('admin')"
+                            v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('finance'))"
                             :href="route('financials.index')"
                             :active="route().current('financials.*')"
                         >
                             Laporan Keuangan
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.includes('admin')"
+                            :href="route('users.index')"
+                            :active="route().current('users.*')"
+                        >
+                            Kelola Pengguna
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.roles && ($page.props.auth.user.roles.includes('admin') || $page.props.auth.user.roles.includes('operator'))"
                             :href="route('scan')"
                             :active="route().current('scan')"
                             class="font-semibold text-indigo-600"
@@ -221,6 +245,7 @@ const showingNavigationDropdown = ref(false);
                             📸 Scan Barcode / QR
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
+                            v-if="$page.props.auth.user.roles && $page.props.auth.user.roles.includes('admin')"
                             :href="route('prd')"
                             :active="route().current('prd')"
                             class="font-semibold text-slate-600"

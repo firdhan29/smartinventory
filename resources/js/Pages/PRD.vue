@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const activeTab = ref('vision');
 
@@ -22,9 +22,17 @@ const checklist = ref([
     { text: 'Automated Invoice / Surat Jalan PDF generation (DomPDF)', checked: true },
     { text: 'Financial spreadsheet download (Excel export)', checked: true },
     { text: 'Multi-device responsive camera scanning interface (Capacitor)', checked: true },
-    { text: 'Role-Based Access Control middleware constraints (Admin vs. Operator)', checked: true },
+    { text: 'Role-Based Access Control middleware constraints (Spatie)', checked: true },
+    { text: 'Registrasi & CRUD Akun Staf (Operator & Finance) oleh Admin', checked: true },
+    { text: 'Pembatasan Akses Grafik & Widget Profit Dasbor untuk Operator', checked: true },
     { text: 'Transaction safety lock mitigation (lockForUpdate DB transaction)', checked: true },
-    { text: 'Automatic high-res image upload compression (Intervention)', checked: true }
+    { text: 'Automatic high-res image upload compression (Intervention)', checked: true },
+    { text: 'Spreadsheet Laporan Keuangan Interaktif & Formula fx (Excel Style)', checked: true },
+    { text: 'Data Karyawan & Jabatan Staf Gudang (CRUD oleh Admin & Finance)', checked: true },
+    { text: 'Penggajian Karyawan / Payroll Terintegrasi Otomatis Buku Besar', checked: true },
+    { text: 'Optimasi Input Angka Tanpa Batas Nominal Mutasi Barang', checked: true },
+    { text: 'Visual Thumbnail Gambar Produk Kecil di Kolom Stok Barang Gudang', checked: true },
+    { text: 'Histori Edit/Hapus Kas Buku Besar & Audit Logging (Admin full control, Finance read-only)', checked: true }
 ]);
 
 const checkedCount = computed(() => checklist.value.filter(c => c.checked).length);
@@ -226,6 +234,13 @@ const progressPercent = computed(() => Math.round((checkedCount.value / checklis
                                     </h4>
                                     <p class="text-[11px] text-slate-400 leading-relaxed">Visualisasi perbandingan omset dan pengeluaran bulanan. Pencatatan manual kas operasional, dan fitur unduh riwayat Excel Buku Besar secara instan.</p>
                                 </div>
+                                <div class="border border-slate-100 rounded-2xl p-4 bg-slate-50/50 space-y-2">
+                                    <h4 class="font-extrabold text-slate-800 text-xs flex items-center justify-between">
+                                        <span>F6. Manajemen Staf & Pembatasan Otoritas Peran (Spatie)</span>
+                                        <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[9px] font-black rounded uppercase">SELESAI</span>
+                                    </h4>
+                                    <p class="text-[11px] text-slate-400 leading-relaxed">Administrator dapat mengelola akun Operator Gudang dan Finance (CRUD). Hak akses navigasi, dasbor KPI profit, dan akses mutasi produk terisolasi dinamis sesuai Spatie Permission.</p>
+                                </div>
                             </div>
                         </div>
 
@@ -297,6 +312,7 @@ const progressPercent = computed(() => Math.round((checkedCount.value / checklis
                                             <th class="p-3.5">Fitur Sistem</th>
                                             <th class="p-3.5">Role Admin</th>
                                             <th class="p-3.5">Role Operator Gudang</th>
+                                            <th class="p-3.5">Role Finance</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 text-slate-500 font-medium">
@@ -304,9 +320,11 @@ const progressPercent = computed(() => Math.round((checkedCount.value / checklis
                                             <td class="p-3.5 font-bold text-slate-700">Manajemen Katalog Produk</td>
                                             <td class="p-3.5 text-emerald-600 font-bold">Ya (CRUD)</td>
                                             <td class="p-3.5 text-rose-500 font-bold">Tidak</td>
+                                            <td class="p-3.5 text-rose-500 font-bold">Tidak</td>
                                         </tr>
                                         <tr>
                                             <td class="p-3.5 font-bold text-slate-700">Melihat Jumlah Stok & Letak Rak</td>
+                                            <td class="p-3.5 text-emerald-600 font-bold">Ya</td>
                                             <td class="p-3.5 text-emerald-600 font-bold">Ya</td>
                                             <td class="p-3.5 text-emerald-600 font-bold">Ya</td>
                                         </tr>
@@ -314,11 +332,19 @@ const progressPercent = computed(() => Math.round((checkedCount.value / checklis
                                             <td class="p-3.5 font-bold text-slate-700">Mencatat Mutasi Barang (Scan/Input)</td>
                                             <td class="p-3.5 text-emerald-600 font-bold">Ya</td>
                                             <td class="p-3.5 text-emerald-600 font-bold">Ya</td>
+                                            <td class="p-3.5 text-rose-500 font-bold">Tidak</td>
                                         </tr>
                                         <tr>
                                             <td class="p-3.5 font-bold text-slate-700">Akses Arus Keuangan (Charts/Profit)</td>
                                             <td class="p-3.5 text-emerald-600 font-bold">Ya (Akses Penuh)</td>
-                                            <td class="p-3.5 text-rose-500 font-bold">Tidak (Terproteksi Middleware)</td>
+                                            <td class="p-3.5 text-rose-500 font-bold">Tidak (Terproteksi)</td>
+                                            <td class="p-3.5 text-emerald-600 font-bold">Ya (Kas & Gaji)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-3.5 font-bold text-slate-700">Manajemen Akun Staf (CRUD)</td>
+                                            <td class="p-3.5 text-emerald-600 font-bold">Ya (Akses Penuh)</td>
+                                            <td class="p-3.5 text-rose-500 font-bold">Tidak</td>
+                                            <td class="p-3.5 text-rose-500 font-bold">Tidak</td>
                                         </tr>
                                     </tbody>
                                 </table>
